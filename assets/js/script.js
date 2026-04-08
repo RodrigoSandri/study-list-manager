@@ -21,7 +21,7 @@ Meta da aula:
 //array para itens
 //contador simples para gerenciar ids únicos
 
-const API_URL = "http://jsonplaceholder.typecode.com/todos";
+const API_URL = "https://jsonplaceholder.typicode.com/todos";
 
 
 const items = [];
@@ -40,10 +40,10 @@ const apiUserIdInput = document.getElementById("api-user-id");
 const apiFeedback = document.getElementById("api-feedback");
 const statusMessage = document.getElementById("status-message");
 const reloadButton = document.getElementById("reload-button");
-const apiSubmitButton = apiForm.querySelector('button[type="submit]"');
+const apiSubmitButton = apiForm.querySelector('button[type="submit"]');
 
 const list = document.getElementById("study-list");
-const empetyState = document.getElementById("empty-state");
+const emptyState = document.getElementById("empty-state");
 
 
 
@@ -139,11 +139,11 @@ function renderList(){
     list.replaceChildren();
 
     if(items.length === 0){
-        empetyState.hidden = false;
-        renderList;
+        emptyState.hidden = false;
+        return;
     }
 
-    empetyState.hidden = true;
+    emptyState.hidden = true;
 
     items.forEach((item) =>{
         list.appendChild(createStudyItem(item));
@@ -170,17 +170,18 @@ function handleFormSubmit(event){
 
     if(errorMessage){
         setFeedback(errorMessage, "error");
+        return;
     }
 
     items.unshift({
-        id: nextId,
-        title
+        id: nextId++,
+        title,
+        source: "manual"
     });
 
-    nextId++;
     form.reset();
     input.focus();
-    setFeedback("Item adicionado com sucesso", "sucess");
+    setFeedback("Item adicionado com sucesso", "success");
     renderList();
 }
 
@@ -212,20 +213,61 @@ function handleListClick(event){
 
     const removeTitle = items[index].title;
     items.splice(index, 1);
-    setFeedback(`Item removido: ${removeTitle} .`, "sucess");
+    setFeedback(`Item removido: ${removeTitle} .`, "success");
     renderList();
+}
+
+async function fetchSuggestions(userID = "") {
+    const params = new URLSearchParams();
+
+    params.set("_limit", "5");
+
+    if(userID){
+        params.set("userId", userID);
+    }
+    const url = `${API_URL}?${params.toString()}`;
+
+    const response = await fetch(url);
+
+    const data = await response.json();
+    if(!Array.isArray(data)){
+        throw new Error("Resposta Inválida");   
+    }
+
+    data.forEach((todo) =>{
+        items.push({
+          id: nextId,
+          title: todo.title,
+          completed: todo.completed,
+          source: "api",
+          userId: todo.userId,
+        });
+
+        nextId++;
+       })
+
+    renderList();
+    
+}
+
+function handleApiSubmit(event){
+    event.preventDefault();
+    lastUserId = apiUserIdInput.value.trim();
+    fetchSuggestions(lastUserId);
 }
 
 
 //ligar os eventos e primeira renderização
+apiForm.addEventListener("submit", handleFormSubmit);
+form.addEventListener("submit", handleFormSubmit);
 form.addEventListener("submit", handleFormSubmit);
 list.addEventListener("click", handleListClick);
-
 input.addEventListener("input", () =>{
     if(feedback.classList.contains("feedback--error")){
         setFeedback("");
     }
-});
+})
 
 renderList();
+fetchSuggestions();
 
