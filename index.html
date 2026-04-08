@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Aula 4 - Lista de estudos</title>
+    <title>Lista de estudos</title>
     <link rel="stylesheet" href="assets/css/style.css" />
   </head>
   <body>
@@ -33,6 +33,28 @@
           </label>
 
           <button class="btn btn--primary" type="submit">Adicionar</button>
+        </form>
+
+        <p id="feedback" class="feedback" aria-live="polite"></p>
+      </section>
+
+        <section class="panel">
+        <h2>Sugestões da API</h2>
+
+        <form id="api-form" class="study-form">
+          <label class="field">
+            <span>user ID</span>
+            <input
+              id="api-user-id"
+              name="userId"
+              type="number"
+              min="1"
+              max="10"
+              placeholder="Ex: 1"
+            />
+          </label>
+
+          <button class="btn btn--ghost" type="submit">Buscar sugestões</button>
         </form>
 
         <p id="feedback" class="feedback" aria-live="polite"></p>

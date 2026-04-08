@@ -1,6 +1,5 @@
 /*
 Starter da Aula 4
-
 Construa a logica do zero, seguindo o EXERCICIO.md.
 
 Ordem sugerida:
@@ -21,6 +20,10 @@ Meta da aula:
 
 //array para itens
 //contador simples para gerenciar ids únicos
+
+const API_URL = "http://jsonplaceholder.typecode.com/todos";
+
+
 const items = [];
 let nextId = 1;
 let lastUserId = "";
