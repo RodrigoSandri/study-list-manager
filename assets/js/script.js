@@ -1,36 +1,15 @@
 /*
 Starter da Aula 4
-Construa a logica do zero, seguindo o EXERCICIO.md.
-
-Ordem sugerida:
-1. Selecionar os elementos do DOM.
-2. Criar a funcao validateTitle(title).
-3. Criar o array items e o contador nextId.
-4. Criar a funcao createStudyItem(item).
-5. Tratar o submit do formulario.
-6. Tratar o click da lista para remover itens com delegacao.
-
-Meta da aula:
-- formulario
-- lista dinamica
-- validacao simples
-- uso de dataset
-- delegacao de eventos
+Projeto final corrigido
 */
 
-//array para itens
-//contador simples para gerenciar ids únicos
-
 const API_URL = "https://jsonplaceholder.typicode.com/todos";
-
 
 const items = [];
 let nextId = 1;
 let lastUserId = "";
 
-
-//Utilizamos selector do DOM para localicar os elementos principais da pagina
-
+// DOM
 const form = document.getElementById("study-form");
 const input = document.getElementById("study-input");
 const feedback = document.getElementById("feedback");
@@ -38,21 +17,16 @@ const feedback = document.getElementById("feedback");
 const apiForm = document.getElementById("api-form");
 const apiUserIdInput = document.getElementById("api-user-id");
 const apiFeedback = document.getElementById("api-feedback");
-const statusMessage = document.getElementById("status-message");
 const reloadButton = document.getElementById("reload-button");
 const apiSubmitButton = apiForm.querySelector('button[type="submit"]');
 
 const list = document.getElementById("study-list");
 const emptyState = document.getElementById("empty-state");
 
-
-
-//funcoes utilitarias, para separar pequenas responsabilidades
-
-//mostra a mensagem para o usuário, aplicado variação visual de sucesso ou erro quando necessário.
+// Feedback
 function setFeedback(message, type = ""){
     feedback.textContent = message;
-    feedback.classList = "feedback";
+    feedback.className = "feedback";
     if(type){
         feedback.classList.add(`feedback--${type}`);
     }
@@ -60,14 +34,13 @@ function setFeedback(message, type = ""){
 
 function setApiFeedback(message, type=""){
     apiFeedback.textContent = message;
-    apiFeedback.className = "feedback"
+    apiFeedback.className = "feedback";
     if(type){
         apiFeedback.classList.add(`feedback--${type}`);
     }
 }
 
-//retorna mensagem de erro se o titulo for invalido
-//ou retorna string vazia quando estiver tudo certo
+// Validação
 function validateTitle(title){
     if(title.length === 0){
         return "Digite uma atividade";
@@ -78,6 +51,7 @@ function validateTitle(title){
     return "";
 }
 
+// Loading API
 function setApiLoading(isLoading){
     apiSubmitButton.disabled = isLoading;
     reloadButton.disabled = isLoading;
@@ -87,11 +61,7 @@ function setApiLoading(isLoading){
     reloadButton.textContent = isLoading ? "Atualizando..." : "Recarregar última busca";
 }
 
-/*
-createStudyItem
--tranforma um item do array em um elemento de <li>
--salva o id em dataset para descobirmos depois qual o item a se remover
-*/
+// Criar item
 function createStudyItem(item){
     const li = document.createElement("li");
     li.className = "study-item";
@@ -108,7 +78,7 @@ function createStudyItem(item){
     top.className = "study-item__top";
 
     const badge = document.createElement("span");
-    badge.className = item.source === "api" ? "badge badge--api" : "badge badge--manual"
+    badge.className = item.source === "api" ? "badge badge--api" : "badge badge--manual";
     badge.textContent = item.source === "api" ? "API" : "Manual";
 
     const meta = document.createElement("p");
@@ -116,7 +86,7 @@ function createStudyItem(item){
 
     if(item.source === "api"){
         const statusLabel = item.completed ? "concluida" : "pendente";
-        meta.textContent = `Sugestão remota | userId: ${item.userId} | ${statusLabel}`
+        meta.textContent = `Sugestão remota | userId: ${item.userId} | ${statusLabel}`;
     }else{
         meta.textContent = "Item criado manualmente";
     }
@@ -134,7 +104,7 @@ function createStudyItem(item){
     return li;
 }
 
-//renderização, atualiza a tela com base no array items.
+// Render
 function renderList(){
     list.replaceChildren();
 
@@ -150,18 +120,7 @@ function renderList(){
     });
 }
 
-//trabalhar o eventos
-//reagir ao formulario e aos cliques
-
-/*
-handleFormSubmit
-impede o recarregamento
-le o texto do input
-valida
-adicionar novo item no array
-limapar e redesenhar a lista
-*/
-
+// FORM MANUAL
 function handleFormSubmit(event){
     event.preventDefault();
 
@@ -185,89 +144,110 @@ function handleFormSubmit(event){
     renderList();
 }
 
-/*
-handleListClick
---usa delegacao para ouvir todos os botoes de remover com um unico listener
---descobre o item clicado pela data-id salvo no <li>
-*/
-
+// REMOVER (delegação)
 function handleListClick(event){
     const button = event.target.closest("button[data-action]");
 
-    if(!button){
-        return;
-    }
+    if(!button) return;
 
     const itemElement = button.closest(".study-item");
-
-    if(!itemElement){
-        return;
-    }
+    if(!itemElement) return;
 
     const id = Number(itemElement.dataset.id);
-    const index = items.findIndex((item) => item.id === id);
+    const index = items.findIndex(item => item.id === id);
 
-    if(index === -1){
-        return;
-    }
+    if(index === -1) return;
 
-    const removeTitle = items[index].title;
+    const removed = items[index].title;
     items.splice(index, 1);
-    setFeedback(`Item removido: ${removeTitle} .`, "success");
+
+    setFeedback(`Item removido: ${removed}`, "success");
     renderList();
 }
 
-async function fetchSuggestions(userID = "") {
+// API
+async function fetchSuggestions(userID = ""){
     const params = new URLSearchParams();
-
     params.set("_limit", "5");
 
     if(userID){
         params.set("userId", userID);
     }
+
     const url = `${API_URL}?${params.toString()}`;
 
     const response = await fetch(url);
 
-    const data = await response.json();
-    if(!Array.isArray(data)){
-        throw new Error("Resposta Inválida");   
+    if(!response.ok){
+        throw new Error("Erro na requisição");
     }
 
-    data.forEach((todo) =>{
-        items.push({
-          id: nextId,
-          title: todo.title,
-          completed: todo.completed,
-          source: "api",
-          userId: todo.userId,
-        });
+    const data = await response.json();
 
-        nextId++;
-       })
+    if(!Array.isArray(data)){
+        throw new Error("Resposta inválida");
+    }
+
+    data.forEach(todo =>{
+        items.push({
+            id: nextId++,
+            title: todo.title,
+            completed: todo.completed,
+            source: "api",
+            userId: todo.userId,
+        });
+    });
 
     renderList();
-    
 }
 
-function handleApiSubmit(event){
+// FORM API
+async function handleApiSubmit(event){
     event.preventDefault();
+
     lastUserId = apiUserIdInput.value.trim();
-    fetchSuggestions(lastUserId);
+
+    try{
+        setApiLoading(true);
+        setApiFeedback("");
+
+        await fetchSuggestions(lastUserId);
+
+        setApiFeedback("Sugestões carregadas com sucesso", "success");
+    }catch{
+        setApiFeedback("Erro ao buscar sugestões", "error");
+    }finally{
+        setApiLoading(false);
+    }
 }
 
+// RELOAD
+reloadButton.addEventListener("click", async () =>{
+    try{
+        setApiLoading(true);
+        setApiFeedback("");
 
-//ligar os eventos e primeira renderização
-apiForm.addEventListener("submit", handleFormSubmit);
+        await fetchSuggestions(lastUserId);
+
+        setApiFeedback("Lista recarregada", "success");
+    }catch{
+        setApiFeedback("Erro ao recarregar", "error");
+    }finally{
+        setApiLoading(false);
+    }
+});
+
+// EVENTOS
 form.addEventListener("submit", handleFormSubmit);
-form.addEventListener("submit", handleFormSubmit);
+apiForm.addEventListener("submit", handleApiSubmit);
 list.addEventListener("click", handleListClick);
+
 input.addEventListener("input", () =>{
     if(feedback.classList.contains("feedback--error")){
         setFeedback("");
     }
-})
+});
 
+// INIT
 renderList();
 fetchSuggestions();
-
