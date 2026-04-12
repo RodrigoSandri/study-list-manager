@@ -1,3 +1,4 @@
+```html
 <!doctype html>
 <html lang="pt-BR">
   <head>
@@ -18,6 +19,7 @@
     </header>
 
     <main class="container layout">
+      <!-- FORMULÁRIO MANUAL -->
       <section class="panel">
         <h2>Novo item manual</h2>
 
@@ -38,12 +40,16 @@
         <p id="feedback" class="feedback" aria-live="polite"></p>
       </section>
 
-        <section class="panel">
+      <!-- FORMULÁRIO API -->
+      <section class="panel">
         <h2>Sugestões da API</h2>
+        <p class="panel__subtitle">
+          Evolua a lista da aula 04 consumindo jsonplaceholder (/todos). Use um userID de 1 a 10 ou deixe em branco.
+        </p>
 
         <form id="api-form" class="study-form">
           <label class="field">
-            <span>user ID</span>
+            <span>User ID</span>
             <input
               id="api-user-id"
               name="userId"
@@ -54,42 +60,27 @@
             />
           </label>
 
-          <button class="btn btn--ghost" type="submit">Buscar sugestões</button>
-        </form>
-
-        <p id="feedback" class="feedback" aria-live="polite"></p>
-      </section>
-
-      <section class="panel">
-        <h2>Sugestões da API</h2>
-        <p class="panel__subtitle">
-          Evolua a lista da aula 04 consumindo jsonplaceholder (`/todos`), Use um userID de 1 a 10 ou deixar em branco
-        </p>
-        <form id="api-form" class="study-form">
-          <label class="field">
-            <span>User ID</span>
-            <input
-            id="api-user-id"
-            name="userId"
-            type="number"
-            min="1"
-            max="10"
-            placeholder="Ex: 1"/>
-          </label>
-
-          <button class="btn btn--ghost" type="submit">Buscar Sugestoes</button>
+          <button class="btn btn--ghost" type="submit">
+            Buscar sugestões
+          </button>
         </form>
 
         <p id="api-feedback" class="feedback" aria-live="polite"></p>
       </section>
 
+      <!-- LISTA -->
       <section class="panel">
         <div class="panel__header">
           <div>
-            <h2>Lista dinamica</h2>
-            <p class="panel__subtitle">A mesma lista agora pode receber itens manuais e sugestões vindas da API</p>
+            <h2>Lista dinâmica</h2>
+            <p class="panel__subtitle">
+              A mesma lista agora pode receber itens manuais e sugestões vindas da API
+            </p>
           </div>
-          <button id="reload-button" class="btn btn--ghost" type="button">Recarregar a ultima busca</button>
+
+          <button id="reload-button" class="btn btn--ghost" type="button">
+            Recarregar a última busca
+          </button>
         </div>
 
         <p id="status-message" class="status" aria-live="polite" hidden>
@@ -107,3 +98,4 @@
     <script src="assets/js/script.js"></script>
   </body>
 </html>
+```

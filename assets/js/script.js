@@ -148,7 +148,8 @@ function handleFormSubmit(event){
 function handleListClick(event){
     const button = event.target.closest("button[data-action]");
 
-    if(!button) return;
+    if(!button) 
+        return;
 
     const itemElement = button.closest(".study-item");
     if(!itemElement) return;
@@ -241,6 +242,14 @@ reloadButton.addEventListener("click", async () =>{
 form.addEventListener("submit", handleFormSubmit);
 apiForm.addEventListener("submit", handleApiSubmit);
 list.addEventListener("click", handleListClick);
+
+input.addEventListener("input", () =>{
+    if(feedback.classList.contains("feedback--error")){
+        setApiFeedback("");
+    }
+});
+
+renderList();
 
 input.addEventListener("input", () =>{
     if(feedback.classList.contains("feedback--error")){
