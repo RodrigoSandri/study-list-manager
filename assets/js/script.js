@@ -209,7 +209,7 @@ async function handleApiSubmit(event){
 
     try{
         setApiLoading(true);
-        setApiFeedback("");
+        setApiFeedback("");     
 
         await fetchSuggestions(lastUserId);
 
