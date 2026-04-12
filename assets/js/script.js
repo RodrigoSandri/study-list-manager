@@ -245,18 +245,12 @@ list.addEventListener("click", handleListClick);
 
 input.addEventListener("input", () =>{
     if(feedback.classList.contains("feedback--error")){
-        setApiFeedback("");
-    }
-});
-
-renderList();
-
-input.addEventListener("input", () =>{
-    if(feedback.classList.contains("feedback--error")){
         setFeedback("");
     }
 });
 
+renderList();
+
 // INIT
 renderList();
-fetchSuggestions();
+// fetchSuggestions();
